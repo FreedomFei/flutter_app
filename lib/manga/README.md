@@ -67,22 +67,80 @@ Returns all manga saved in the user's mymanga list with all the informations abo
 Note: to download an image you have to add "https://cdn.mangaeden.com/mangasimg/" ahead the image's url. 
 Note: the dates are unix time stamps.
 
-
+//1
 GridView.builder(
     itemCount: 20,
     gridDelegate:
-        new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+        SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     itemBuilder: (BuildContext context, int index) {
-      return new GestureDetector(
-        child: new Card(
+      return GestureDetector(
+        child: Card(
           elevation: 5.0,
-          child: new Container(
-            alignment: Alignment.center,
-            child: new Text('Item $index'),
-          ),
+          child: ,
         ),
-        onTap: () {
-
-        },
+        onTap: () {},
       );
     });
+
+//2
+class MyApp extends StatelessWidget {
+  final Future<Post> post;
+
+  MyApp({Key key, this.post}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Post>(
+      future: post,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data.title);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        // By default, show a loading spinner
+        return CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class MyApp2 extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _myAppState();
+  }
+}
+
+// ignore: camel_case_types
+class _myAppState extends State<MyApp2> {
+  Future<Post> post;
+
+  @override
+  void initState() {
+    super.initState();
+    post = fetchPost();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Post>(
+      future: post,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data.title);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        // By default, show a loading spinner
+        return CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+//4
+Future.delayed(Duration.zero, () => setState(() {}));

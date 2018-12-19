@@ -4,45 +4,100 @@ import 'info.dart';
 import 'model/manga.dart';
 import 'server.dart';
 
-class MangaHomePage extends StatelessWidget {
+class MangaHomePage extends StatefulWidget {
+  @override
+  State createState() {
+    return MangaHomePageState();
+  }
+}
+
+class MangaHomePageState extends State<MangaHomePage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  int _page = 0;
+  List<HomeManga> _mangas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: _MangaListWidget(homeMangaList: getMangaHomeList()),
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: _handleRefresh,
+        child: _buildManaCards(context, _mangas),
+      ),
     );
   }
-}
 
-class _MangaListWidget extends StatelessWidget {
-  final Future<List<HomeManga>> homeMangaList;
+  Future<void> _handleRefresh() {
+//    return FutureBuilder<List<HomeManga>>(
+//      future: getMangaHomeList(),
+//      builder: (BuildContext context, AsyncSnapshot<List<HomeManga>> snapshot) {
+//        if (snapshot.hasData) {
+//          return _buildManaCards(context, snapshot.data);
+//        } else if (snapshot.hasError) {
+//          return Text('${snapshot.error}');
+//        }
+//        return Center(child: CircularProgressIndicator());
+//      },
+//    );
 
-  _MangaListWidget({Key key, this.homeMangaList});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<HomeManga>>(
-      future: homeMangaList, //可以直接调用getHomeMangaList()
-      builder: (BuildContext context, AsyncSnapshot<List<HomeManga>> snapshot) {
-        if (snapshot.hasData) {
-          return _buildManaCards(context, snapshot.data);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-        return Center(child: CircularProgressIndicator());
-      },
-    );
+    return getMangaHomeList().then((value) {
+      setState(() {
+        _mangas = value;
+      });
+    });
   }
+
+  Future<void> _handleMore() {
+    return getMangaHomeList(page: _page++).then((value) {
+      setState(() {
+        _mangas.addAll(value);
+      });
+    });
+  }
+
+  int _length = 0;
 
   Widget _buildManaCards(BuildContext context, List<HomeManga> mangas) {
-    return GridView.count(
-        crossAxisCount: 2,
-        padding: EdgeInsets.all(16.0),
-        children: mangas.map((manga) {
-          return _buildCard(context, manga);
-        }).toList());
+//    return GridView.count(
+//        crossAxisCount: 2,
+//        padding: EdgeInsets.all(16.0),
+//        children: mangas.map((manga) {
+//          return _buildCard(context, manga);
+//        }).toList());
+
+    setState(() {
+      _length += _mangas.length;
+    });
+
+    return GridView.builder(
+        itemCount: _length,
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        itemBuilder: (BuildContext context, int index) {
+          if (index == _length - 1) {
+            Future.delayed(
+                Duration.zero,
+                () => setState(() {
+                      print('setState');
+                      _handleMore();
+                    }));
+          }
+          print('$index');
+
+          return _buildCard(context, mangas[index]);
+        });
   }
 
   Widget _buildCard(BuildContext context, HomeManga manga) {
@@ -74,62 +129,3 @@ class _MangaListWidget extends StatelessWidget {
     );
   }
 }
-
-//class MyApp extends StatelessWidget {
-//  final Future<Post> post;
-//
-//  MyApp({Key key, this.post}) : super(key: key);
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return FutureBuilder<Post>(
-//      future: post,
-//      builder: (context, snapshot) {
-//        if (snapshot.hasData) {
-//          return Text(snapshot.data.title);
-//        } else if (snapshot.hasError) {
-//          return Text("${snapshot.error}");
-//        }
-//
-//        // By default, show a loading spinner
-//        return CircularProgressIndicator();
-//      },
-//    );
-//  }
-//}
-//
-//// ignore: must_be_immutable
-//class MyApp2 extends StatefulWidget {
-//  @override
-//  State<StatefulWidget> createState() {
-//    return _myAppState();
-//  }
-//}
-//
-//// ignore: camel_case_types
-//class _myAppState extends State<MyApp2> {
-//  Future<Post> post;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    post = fetchPost();
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return FutureBuilder<Post>(
-//      future: post,
-//      builder: (context, snapshot) {
-//        if (snapshot.hasData) {
-//          return Text(snapshot.data.title);
-//        } else if (snapshot.hasError) {
-//          return Text("${snapshot.error}");
-//        }
-//
-//        // By default, show a loading spinner
-//        return CircularProgressIndicator();
-//      },
-//    );
-//  }
-//}
