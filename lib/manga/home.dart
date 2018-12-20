@@ -18,11 +18,22 @@ class MangaHomePageState extends State<MangaHomePage> {
   int _page = 0;
   List<HomeManga> _mangas = [];
 
+  ScrollController _scrollController = new ScrollController();
+
+  bool isPerformingRequest = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance
         .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        _handleMore();
+      }
+    });
   }
 
   @override
@@ -34,14 +45,20 @@ class MangaHomePageState extends State<MangaHomePage> {
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: _handleRefresh,
-        child: _buildManaCards(context, _mangas),
+        child: _buildManaCards(context),
       ),
     );
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   Future<void> _handleRefresh() {
 //    return FutureBuilder<List<HomeManga>>(
-//      future: getMangaHomeList(),
+//      future: getMangaHomeList(page: _page = 0),
 //      builder: (BuildContext context, AsyncSnapshot<List<HomeManga>> snapshot) {
 //        if (snapshot.hasData) {
 //          return _buildManaCards(context, snapshot.data);
@@ -52,56 +69,70 @@ class MangaHomePageState extends State<MangaHomePage> {
 //      },
 //    );
 
-    return getMangaHomeList().then((value) {
+    return getMangaHomeList(page: _page = 0).then((value) {
       setState(() {
         _mangas = value;
       });
     });
   }
 
-  Future<void> _handleMore() {
-    return getMangaHomeList(page: _page++).then((value) {
+  _handleMore() async {
+    if (!isPerformingRequest) {
       setState(() {
-        _mangas.addAll(value);
+        isPerformingRequest = true;
       });
-    });
+
+      await getMangaHomeList(page: ++_page).then((value) {
+        setState(() {
+          _mangas.addAll(value);
+          isPerformingRequest = false;
+        });
+      });
+    }
   }
 
-  int _length = 0;
+  Widget _buildProgressIndicator() {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Center(
+        child: Opacity(
+          opacity: isPerformingRequest ? 1.0 : 0.0,
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+  }
 
-  Widget _buildManaCards(BuildContext context, List<HomeManga> mangas) {
+  Widget _buildManaCards(BuildContext context) {
 //    return GridView.count(
 //        crossAxisCount: 2,
 //        padding: EdgeInsets.all(16.0),
-//        children: mangas.map((manga) {
+//        children: _mangas.map((manga) {
 //          return _buildCard(context, manga);
 //        }).toList());
 
-    setState(() {
-      _length += _mangas.length;
-    });
-
     return GridView.builder(
-        itemCount: _length,
+        itemCount: _mangas.length + 1,
         gridDelegate:
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        controller: _scrollController,
         itemBuilder: (BuildContext context, int index) {
-          if (index == _length - 1) {
-            Future.delayed(
-                Duration.zero,
-                () => setState(() {
-                      print('setState');
-                      _handleMore();
-                    }));
-          }
           print('$index');
 
-          return _buildCard(context, mangas[index]);
+          if (index == _mangas.length) {
+            return _buildProgressIndicator();
+          }
+
+          return _buildCard(context, _mangas[index]);
         });
   }
 
   Widget _buildCard(BuildContext context, HomeManga manga) {
-    var imageUrl = imageBaseUrl + manga.im.toString();
+    var imageUrl;
+
+    if (manga.im != null) {
+      imageUrl = imageBaseUrl + manga.im.toString();
+    }
 
     return GestureDetector(
       onTap: () {
@@ -115,7 +146,9 @@ class MangaHomePageState extends State<MangaHomePage> {
           children: <Widget>[
             AspectRatio(
               aspectRatio: 5 / 3,
-              child: Image.network(imageUrl),
+              child: imageUrl == null
+                  ? Image.asset('assets/AttachmentPlaceholder-Dark.png')
+                  : Image.network(imageUrl),
             ),
             Text(
               manga.t,
