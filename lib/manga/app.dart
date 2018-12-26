@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-
-import 'home.dart';
-import 'info.dart';
+import 'package:flutter_app/manga/home2.dart';
 
 class MangaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MangaApp',
-      home: MangaHomePage(),
+      home: MainPage(),
       initialRoute: '/',
       routes: {
-        '/info': (context) {
-          return MangaInfoPage();
-        },
+//        '/info': (context) => MangaInfoPage(),
       },
     );
   }
