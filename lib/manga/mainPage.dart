@@ -33,9 +33,7 @@ class MainPageState extends State<MainPage> {
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _navCurrentIndex,
           onTap: (index) {
-//            _onTabTapped(index);
-
-            _navCurrentIndex = index;
+            _onTabTapped(index);
             _pageController.jumpToPage(index);
           },
           type: BottomNavigationBarType.fixed,
@@ -56,11 +54,11 @@ class MainPageState extends State<MainPage> {
     );
   }
 
-//  void _onTabTapped(int index) {
-//    print('_onTabTapped $index');
-//
-//    setState(() {
-//      _navCurrentIndex = index;
-//    });
-//  }
+  void _onTabTapped(int index) {
+    print('_onTabTapped $index');
+
+    setState(() {
+      _navCurrentIndex = index;
+    });
+  }
 }
