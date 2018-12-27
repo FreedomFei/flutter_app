@@ -11,7 +11,8 @@ class MangaHomePage extends StatefulWidget {
   }
 }
 
-class MangaHomePageState extends State<MangaHomePage> {
+class MangaHomePageState extends State<MangaHomePage>
+    with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -21,6 +22,9 @@ class MangaHomePageState extends State<MangaHomePage> {
   ScrollController _scrollController = new ScrollController();
 
   bool isPerformingRequest = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {

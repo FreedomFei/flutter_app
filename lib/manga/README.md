@@ -67,6 +67,14 @@ Returns all manga saved in the user's mymanga list with all the informations abo
 Note: to download an image you have to add "https://cdn.mangaeden.com/mangasimg/" ahead the image's url. 
 Note: the dates are unix time stamps.
 
+
+//project catelog
+main
+    =>app
+        =>mainPage
+            =>[homePage,home,temp]
+
+
 //1
 GridView.builder(
     itemCount: 20,

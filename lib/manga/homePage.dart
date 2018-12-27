@@ -4,76 +4,20 @@ import 'info.dart';
 import 'model/manga.dart';
 import 'server.dart';
 
-class MainPage extends StatefulWidget {
-  @override
-  State createState() {
-    return MainPageState();
-  }
-}
-
-class MainPageState extends State<MainPage> {
-  int _navCurrentIndex = 0;
-
-//  List<Widget> _pageChildren = [
-//    HomePage(key: UniqueKey()),
-//    HomePage(key: UniqueKey()),
-//    HomePage(key: UniqueKey()),
-//  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('home 2')),
-//      body: _pageChildren[_navCurrentIndex],
-      body: IndexedStack(
-        index: _navCurrentIndex,
-        children: <Widget>[
-          HomePage(key: UniqueKey()),
-          HomePage(key: UniqueKey()),
-          Text('xxxxxxxx'),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _navCurrentIndex,
-          onTap: _onTabTapped,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              title: Text('Favorite'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ]),
-    );
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _navCurrentIndex = index;
-    });
-  }
-}
-
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    print('FirstPage createState');
+    print('HomePage createState');
     return new HomePageState();
   }
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
+  int _currentPage = 0;
 
   int _page = 0;
   List<HomeManga> _mangas = [];
@@ -82,9 +26,12 @@ class HomePageState extends State<HomePage> {
   bool _performingRequest = false;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
-    print('FirstPageState initState');
+    print('HomePage initState');
 
     WidgetsBinding.instance
         .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
@@ -99,17 +46,25 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('FirstPageState build');
+    print('HomePage build');
 
-    return RefreshIndicator(
-        key: _refreshIndicatorKey,
-        child: _buildManaCards(),
-        onRefresh: _handleRefresh);
+    return Offstage(
+      offstage: _currentPage != _page,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Home Page'),
+        ),
+        body: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            child: _buildManaCards(),
+            onRefresh: _handleRefresh),
+      ),
+    );
   }
 
   @override
   void dispose() {
-    print('FirstPageState dispose');
+    print('HomePage dispose');
 
     _scrollController.dispose();
     super.dispose();
@@ -148,7 +103,7 @@ class HomePageState extends State<HomePage> {
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         controller: _scrollController,
         itemBuilder: (BuildContext context, int index) {
-          print('manga cards $index');
+//          print('manga cards $index');
 
           if (index == _mangas.length) {
             return _buildProgressIndicator();
