@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'model/info.dart';
-import 'viewer.dart';
 import 'server.dart';
+import 'viewer.dart';
 
 class MangaInfoPage extends StatelessWidget {
   final String id;
@@ -46,9 +46,10 @@ class _InfoWidget extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8.0),
-                  SizedBox.fromSize(
-                      size: Size.fromHeight(200.0),
-                      child: _buildChapters(info.chapters)),
+//                  SizedBox.fromSize(
+//                      size: Size.fromHeight(200.0),
+//                      child: _buildChapters(info.chapters)),
+                  _buildChapters(info.chapters),
                 ],
               ),
             );
@@ -60,6 +61,7 @@ class _InfoWidget extends StatelessWidget {
         });
   }
 
+  ///manga信息
   Widget _buildInfo(context, info) {
     var textTheme = Theme.of(context).textTheme;
 
@@ -111,6 +113,7 @@ class _InfoWidget extends StatelessWidget {
     );
   }
 
+  ///描述
   Widget _buildDescription(description) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,8 +128,10 @@ class _InfoWidget extends StatelessWidget {
     );
   }
 
+  ///章节集合
   Widget _buildChapters(List<List> chapters) {
     return ListView.builder(
+        shrinkWrap: true,
         itemCount: chapters.length,
         itemBuilder: (BuildContext context, int index) {
           var chapter = chapters[index];

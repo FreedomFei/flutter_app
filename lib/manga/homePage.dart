@@ -48,17 +48,14 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     print('HomePage build');
 
-    return Offstage(
-      offstage: _currentPage != _page,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Home Page'),
-        ),
-        body: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            child: _buildManaCards(),
-            onRefresh: _handleRefresh),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Page'),
       ),
+      body: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          child: _buildManaCards(),
+          onRefresh: _handleRefresh),
     );
   }
 
@@ -80,13 +77,13 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   }
 
   ///加载更多
-  void _handleMore() {
+  void _handleMore() async {
     if (!_performingRequest) {
       setState(() {
         _performingRequest = true;
       });
 
-      getMangaHomeList(page: ++_page).then((value) {
+      await getMangaHomeList(page: ++_page).then((value) {
         setState(() {
           _mangas.addAll(value);
           _performingRequest = false;
@@ -103,7 +100,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         controller: _scrollController,
         itemBuilder: (BuildContext context, int index) {
-//          print('manga cards $index');
+          print('manga cards $index');
 
           if (index == _mangas.length) {
             return _buildProgressIndicator();
@@ -115,6 +112,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
 
   ///加载更多UI
   Widget _buildProgressIndicator() {
+    print('_buildProgressIndicator');
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Center(
