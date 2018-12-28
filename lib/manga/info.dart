@@ -46,10 +46,10 @@ class _InfoWidget extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8.0),
-//                  SizedBox.fromSize(
-//                      size: Size.fromHeight(200.0),
-//                      child: _buildChapters(info.chapters)),
-                  _buildChapters(info.chapters),
+                  SizedBox.fromSize(
+                      size: Size.fromHeight(200.0),
+                      child: _buildChapters(info.chapters)),
+//                  _buildChapters(info.chapters),
                 ],
               ),
             );
@@ -62,8 +62,18 @@ class _InfoWidget extends StatelessWidget {
   }
 
   ///manga信息
-  Widget _buildInfo(context, info) {
+  Widget _buildInfo(BuildContext context, Info info) {
     var textTheme = Theme.of(context).textTheme;
+
+    var imageUrl = info.image == null ? null : imageBaseUrl + info.image;
+
+//    FadeInImage.assetNetwork(
+//      placeholder: 'assets/AttachmentPlaceholder-Dark.png',
+//      image: imageUrl,
+//      fit: BoxFit.cover,
+//      height: 180.0,
+//      width: 120.0,
+//    )
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,12 +81,19 @@ class _InfoWidget extends StatelessWidget {
         Material(
           borderRadius: BorderRadius.circular(4.0),
           elevation: 4.0,
-          child: Image.network(
-            imageBaseUrl + info.image.toString(),
-            fit: BoxFit.cover,
-            height: 180.0,
-            width: 120.0,
-          ),
+          child: imageUrl == null
+              ? Image.asset(
+                  'assets/AttachmentPlaceholder-Dark.png',
+                  fit: BoxFit.cover,
+                  height: 180.0,
+                  width: 120.0,
+                )
+              : Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  height: 180.0,
+                  width: 120.0,
+                ),
         ),
         SizedBox(
           width: 16.0,

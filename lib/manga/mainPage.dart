@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/manga/category.dart';
 import 'package:flutter_app/manga/home.dart';
 import 'package:flutter_app/manga/homePage.dart';
 
@@ -14,8 +15,8 @@ class MainPageState extends State<MainPage> {
 
   List<Widget> _pageChildren = [
     HomePage(),
+    CategoryPage(),
     MangaHomePage(),
-    Text("xxxx"),
   ];
 
   var _pageController = new PageController(initialPage: 0);

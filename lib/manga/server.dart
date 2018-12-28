@@ -9,19 +9,75 @@ import 'model/manga.dart';
 
 const imageBaseUrl = 'https://cdn.mangaeden.com/mangasimg/';
 
+List<String> categoryNames = <String>[];
+Map<String, List<HomeManga>> categoryChildren = Map();
+
+///get mangas
 Future<List<HomeManga>> getMangaHomeList({page = 0, length = 30}) async {
   final response =
-      await http.get('https://www.mangaeden.com/api/list/0/?p=$page&l=$length');
+//      await http.get('https://www.mangaeden.com/api/list/0/?p=$page&l=$length');
+      await http.get('https://www.mangaeden.com/api/list/0/');
   print(response.request.url);
 
   if (response.statusCode == 200) {
     var baseHomeManga = BaseHomeManga.fromJson(json.decode(response.body));
+
+    categoryChildren = handleCategory(baseHomeManga.manga);
+
+//    categoryNames = handleCategorySort(baseHomeManga.manga);
+    categoryChildren.values
+        .toList()
+        .map((l) {
+          return l.length;
+        })
+        .toList()
+        .sort();
+
+    categoryNames = categoryChildren.keys.toList();
+    print(categoryNames);
+
     return baseHomeManga.manga;
   } else {
     throw Exception('Failed to load data');
   }
 }
 
+/// category sort by count
+List<String> handleCategorySort(List<HomeManga> mangas) {
+  var categories = <String>[];
+  mangas.forEach((e) {
+    e.c.forEach((c) {
+      categories.add(c);
+    });
+  });
+
+  var category = <String, int>{};
+  categories.forEach((e) {
+    if (!category.keys.contains(e)) {
+      category[e] = 1;
+    } else {
+      category[e] = ++category[e];
+    }
+  });
+
+  category.values.toList().sort();
+  print(category);
+  return category.keys.toList();
+}
+
+///mangas by category
+Map<String, List<HomeManga>> handleCategory(List<HomeManga> mangas) {
+  Map<String, List<HomeManga>> result = Map();
+
+  mangas.forEach((manga) {
+    manga.c.forEach((category) {
+      (result[category] ??= List()).add(manga);
+    });
+  });
+  return result;
+}
+
+///get mannga info
 Future<Info> getMangaInfo(String mangaId) async {
   final response =
       await http.get('https://www.mangaeden.com/api/manga/$mangaId/');
@@ -40,6 +96,7 @@ Info parseInfo(String responseBody) {
   return Info.fromJson(json.decode(responseBody));
 }
 
+///get chapter pages
 Future<Chapter> getChapterPages(String chapterId) async {
   final response =
       await http.get('https://www.mangaeden.com/api/chapter/$chapterId/');

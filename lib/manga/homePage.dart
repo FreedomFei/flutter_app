@@ -17,8 +17,6 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  int _currentPage = 0;
-
   int _page = 0;
   List<HomeManga> _mangas = [];
 
@@ -126,11 +124,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
 
   ///单个卡片
   Widget _buildCard(BuildContext context, HomeManga manga) {
-    var imageUrl;
-
-    if (manga.im != null) {
-      imageUrl = imageBaseUrl + manga.im.toString();
-    }
+    var imageUrl = manga.im == null ? null : imageBaseUrl + manga.im;
 
     return GestureDetector(
       onTap: () {
