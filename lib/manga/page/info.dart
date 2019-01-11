@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'model/info.dart';
-import 'server.dart';
-import 'viewer.dart';
+import 'package:flutter_app/manga/model/info.dart';
+import 'package:flutter_app/manga/page/viewer.dart';
+import 'package:flutter_app/manga/server.dart';
 
 class MangaInfoPage extends StatelessWidget {
   final String id;
@@ -65,7 +64,7 @@ class _InfoWidget extends StatelessWidget {
   Widget _buildInfo(BuildContext context, Info info) {
     var textTheme = Theme.of(context).textTheme;
 
-    var imageUrl = info.image == null ? null : imageBaseUrl + info.image;
+    var imageUrl = info.image == null ? null : baseImageUrl + info.image;
 
 //    FadeInImage.assetNetwork(
 //      placeholder: 'assets/AttachmentPlaceholder-Dark.png',
@@ -152,7 +151,7 @@ class _InfoWidget extends StatelessWidget {
         itemCount: chapters.length,
         itemBuilder: (BuildContext context, int index) {
           var chapter = chapters[index];
-          print(chapter.toString());
+//          print(chapter.toString());
 
           return GestureDetector(
             onTap: () {

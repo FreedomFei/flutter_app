@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/manga/category.dart';
-import 'package:flutter_app/manga/home.dart';
-import 'package:flutter_app/manga/homePage.dart';
+import 'package:flutter_app/manga/page/category.dart';
+import 'package:flutter_app/manga/page/home.dart';
+import 'package:flutter_app/manga/page/settings.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -16,10 +16,10 @@ class MainPageState extends State<MainPage> {
   List<Widget> _pageChildren = [
     HomePage(),
     CategoryPage(),
-    MangaHomePage(),
+    SettingsPage(),
   ];
 
-  var _pageController = new PageController(initialPage: 0);
+  PageController _pageController = new PageController(initialPage: 0);
 
   @override
   Widget build(BuildContext context) {

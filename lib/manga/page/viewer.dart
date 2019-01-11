@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'model/chapter.dart';
-import 'server.dart';
+import 'package:flutter_app/manga/model/chapter.dart';
+import 'package:flutter_app/manga/server.dart';
 
 class ChapterPage extends StatelessWidget {
   final String chapterId;
@@ -39,7 +38,7 @@ class ChapterPage extends StatelessWidget {
         itemCount: images.length,
         itemBuilder: (context, index) {
           var image = images[index];
-          var imageUrl = imageBaseUrl + image[1];
+          var imageUrl = baseImageUrl + image[1];
           print(index.toString() + ':' + imageUrl);
           return Column(
             children: <Widget>[

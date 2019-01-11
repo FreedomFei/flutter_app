@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/manga/mainPage.dart';
+import 'package:flutter_app/manga/page/mainPage.dart';
 
 class MangaApp extends StatelessWidget {
   @override
