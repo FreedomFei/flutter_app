@@ -146,9 +146,13 @@ class _InfoWidget extends StatelessWidget {
 
   ///章节集合
   Widget _buildChapters(List<List> chapters) {
-    return ListView.builder(
+    return ListView.separated(
         shrinkWrap: true,
         itemCount: chapters.length,
+        separatorBuilder: (BuildContext context, int index) => Divider(
+              height: 4.0,
+              color: null,
+            ),
         itemBuilder: (BuildContext context, int index) {
           var chapter = chapters[index];
 //          print(chapter.toString());
@@ -167,7 +171,7 @@ class _InfoWidget extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: Padding(
-                padding: EdgeInsets.all(4.0),
+                padding: EdgeInsets.all(8.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

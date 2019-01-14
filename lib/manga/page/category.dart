@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/manga/mangaList.dart';
 import 'package:flutter_app/manga/server.dart' as server;
+import 'package:flutter_app/manga/widget/mangaList.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -25,17 +25,7 @@ class CategoryPageState extends State<CategoryPage>
   void initState() {
     super.initState();
 
-    _categoryNames = server.getCategoryNames();
-
-//    server.getCategoryNames().then((List<String> categoryNames) {
-//      setState(() {
-//        _categoryNames = categoryNames;
-//        print(_categoryNames);
-//
-//        _tabController =
-//            TabController(length: _categoryNames.length, vsync: this);
-//      });
-//    });
+    _categoryNames = server.categoryNames;
     _tabController = TabController(length: _categoryNames.length, vsync: this);
   }
 
@@ -77,7 +67,7 @@ class CategoryPageState extends State<CategoryPage>
     return List.generate(_categoryNames.length, (index) {
       var categoryName = _categoryNames[index];
 
-      var categoryChild = server.getCategories()[categoryName];
+      var categoryChild = server.categories[categoryName];
 //      var categoryChild = categories[categoryName];
 
       return MangaList(categoryChild);

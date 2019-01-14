@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/manga/mangaList.dart';
 import 'package:flutter_app/manga/model/manga.dart';
 import 'package:flutter_app/manga/page/info.dart';
 import 'package:flutter_app/manga/server.dart' as server;
+import 'package:flutter_app/manga/widget/mangaList.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -112,7 +112,7 @@ class _SearchDelegate extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final Iterable<String> suggestions = query.isEmpty
         ? _history
-        : server.getMangaList().expand((HomeManga manga) {
+        : server.homeMangas.expand((HomeManga manga) {
             if ('${manga.t}'.toLowerCase().contains(query.toLowerCase())) {
               return ['${manga.t}'];
             } else {
@@ -188,7 +188,8 @@ class _ResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    final List<HomeManga> suggestions = server.getMangaList()
+    final List<HomeManga> suggestions = server
+        .homeMangas
         .where((HomeManga manga) => '${manga.t}'.contains(searched))
         .toList();
 
