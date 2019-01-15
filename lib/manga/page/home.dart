@@ -3,6 +3,7 @@ import 'package:flutter_app/manga/model/manga.dart';
 import 'package:flutter_app/manga/page/info.dart';
 import 'package:flutter_app/manga/server.dart' as server;
 import 'package:flutter_app/manga/widget/mangaList.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -134,7 +135,7 @@ class _SearchDelegate extends SearchDelegate<String> {
   ///搜索结果
   @override
   Widget buildResults(BuildContext context) {
-    print('==$query');
+    print('search:$query');
     if (query == null || query.trim() == '') {
       return Center(
         child: Text(
@@ -188,8 +189,7 @@ class _ResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    final List<HomeManga> suggestions = server
-        .homeMangas
+    final List<HomeManga> suggestions = server.homeMangas
         .where((HomeManga manga) => '${manga.t}'.contains(searched))
         .toList();
 
@@ -214,9 +214,11 @@ class _ResultCard extends StatelessWidget {
                       '${manga.t}',
                       style: theme.textTheme.headline.copyWith(fontSize: 20.0),
                     ),
-                    Text(
-                      '${manga.i}',
-                    ),
+                    Text(manga.ld == null
+                        ? 'unknow'
+                        : DateFormat('yyyy-MM-dd HH:mm:ss').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                (manga.ld * 1000).toInt()))),
                   ],
                 ),
               ),

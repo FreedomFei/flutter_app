@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/manga/model/manga.dart';
 import 'package:flutter_app/manga/page/info.dart';
 import 'package:flutter_app/manga/server.dart';
+import 'package:intl/intl.dart';
 
 class MangaList extends StatelessWidget {
   final _mangas;
@@ -46,6 +47,11 @@ class MangaList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(manga.h.toString()),
+            Text(manga.ld == null
+                ? 'unknown'
+                : DateFormat('yyyy-MM-dd HH:mm:ss').format(
+                    DateTime.fromMillisecondsSinceEpoch(
+                        (manga.ld * 1000).toInt()))),
           ],
         ),
       ),

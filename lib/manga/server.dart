@@ -24,6 +24,17 @@ Future<List<HomeManga>> getMangaHomeList({page = 0, length = 30}) async {
     BaseHomeManga baseHomeManga =
         BaseHomeManga.fromJson(json.decode(response.body));
 
+    //最新更新时间排序
+    baseHomeManga.manga.sort((a, b) {
+      //a<b=-1;a>b=1
+      if (a.ld == null) {
+        return 1;
+      } else if (b.ld == null) {
+        return -1;
+      }
+      return b.ld.compareTo(a.ld);
+    });
+
     categories = handleCategory(baseHomeManga.manga);
 
 //    _categoryNames = handleCategorySort(baseHomeManga.manga);
@@ -34,11 +45,16 @@ Future<List<HomeManga>> getMangaHomeList({page = 0, length = 30}) async {
         })
         .toList()
         .sort();
-
     categoryNames = categories.keys.toList();
 //    print(_categoryNames);
-    homeMangas = baseHomeManga.manga;
-    return baseHomeManga.manga;
+
+    //过滤
+    homeMangas = baseHomeManga.manga.where((manga) {
+      return manga.ld != null;
+    }).toList();
+
+//    return baseHomeManga.manga;
+    return homeMangas;
   } else {
     throw Exception('Failed to load data');
   }

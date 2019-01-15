@@ -14,8 +14,8 @@ class MainPageState extends State<MainPage> {
   int _navCurrentIndex = 0;
 
   List<Widget> _pageChildren = [
-    HomePage(),
     CategoryPage(),
+    HomePage(),
     SettingsPage(),
   ];
 

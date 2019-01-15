@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/manga/model/info.dart';
 import 'package:flutter_app/manga/page/viewer.dart';
 import 'package:flutter_app/manga/server.dart';
+import 'package:intl/intl.dart';
 
 class MangaInfoPage extends StatelessWidget {
   final String id;
@@ -120,7 +121,12 @@ class _InfoWidget extends StatelessWidget {
               SizedBox(height: 8.0),
               Text('Author:${info.author}'),
               Text('Artist:${info.artist}'),
-              Text('released:${info.released}'),
+              Text('created:' +
+                  (info.created == null
+                      ? 'unknown'
+                      : DateFormat('yyyy-MM-dd').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              (info.created * 1000).toInt())))),
               Text('Chapters:${info.chapters_len}'),
             ],
           ),
@@ -149,6 +155,7 @@ class _InfoWidget extends StatelessWidget {
     return ListView.separated(
         shrinkWrap: true,
         itemCount: chapters.length,
+        controller: ScrollController(keepScrollOffset: false),
         separatorBuilder: (BuildContext context, int index) => Divider(
               height: 4.0,
               color: null,
