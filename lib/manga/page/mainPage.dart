@@ -19,39 +19,43 @@ class MainPageState extends State<MainPage> {
     SettingsPage(),
   ];
 
-  PageController _pageController = new PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: 0);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView.builder(
+    return WillPopScope(
+      onWillPop: () => _dialogExitApp(context),
+      child: Scaffold(
+        body: PageView.builder(
 //        onPageChanged: (int index) => _pageController.jumpToPage(index),
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: 3,
-        itemBuilder: (BuildContext context, int index) => _pageChildren[index],
+          controller: _pageController,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: 3,
+          itemBuilder: (BuildContext context, int index) =>
+              _pageChildren[index],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _navCurrentIndex,
+            onTap: (index) {
+              _onTabTapped(index);
+              _pageController.jumpToPage(index);
+            },
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                title: Text('Home'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.favorite),
+                title: Text('Favorite'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                title: Text('Settings'),
+              ),
+            ]),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _navCurrentIndex,
-          onTap: (index) {
-            _onTabTapped(index);
-            _pageController.jumpToPage(index);
-          },
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              title: Text('Favorite'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ]),
     );
   }
 
@@ -61,5 +65,22 @@ class MainPageState extends State<MainPage> {
     setState(() {
       _navCurrentIndex = index;
     });
+  }
+
+  /// 单击提示退出
+  Future<bool> _dialogExitApp(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              content: Text("是否退出"),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text("取消")),
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: Text("确定"))
+              ],
+            ));
   }
 }

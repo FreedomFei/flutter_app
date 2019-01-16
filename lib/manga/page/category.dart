@@ -65,7 +65,7 @@ class CategoryPageState extends State<CategoryPage>
           ),
           IconButton(
             tooltip: 'Refresh',
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: () {
               _refreshIndicatorKey.currentState.show();
             },
@@ -78,6 +78,7 @@ class CategoryPageState extends State<CategoryPage>
         ),
       ),
       body: RefreshIndicator(
+        //todo:有瑕疵
         key: _refreshIndicatorKey,
         child: TabBarView(
           controller: _tabController,
@@ -106,7 +107,9 @@ class CategoryPageState extends State<CategoryPage>
             .sort();
         _categoryNames = _categories.keys.toList();
 
-        _tabController.animateTo(0);
+        _tabController?.animateTo(0);
+        _tabController =
+            TabController(length: _categoryNames.length, vsync: this);
       });
     });
   }
